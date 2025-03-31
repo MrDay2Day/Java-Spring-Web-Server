@@ -1,4 +1,4 @@
-# Spring Boot Web Server Example
+# Spring Web Server Example
 
 A Java web server example demonstrating secure communication would typically involve these key components:
 
