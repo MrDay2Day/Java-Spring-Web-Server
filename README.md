@@ -1,6 +1,24 @@
 # Spring Boot Web Server Example
 
-Fully function web server with authentication and websocket realtime communication.
+A Java web server example demonstrating secure communication would typically involve these key components:
+
+- **Authentication:**
+  - This ensures that only authorized users can access the server's resources. Common methods include `username`/`password` validation, and more robustly, token-based authentication like `JWT` (JSON Web Tokens).
+- **Token Refresh:**
+  - To enhance security and user experience, access tokens often have a limited lifespan. Token refresh mechanisms allow clients to obtain new access tokens without requiring users to re-enter their credentials. This is often done using refresh tokens.
+- **WebSockets:**
+  - WebSockets enable real-time, bidirectional communication between the client and server. This is crucial for applications requiring instant updates, such as chat applications or live data feeds.
+- **Security Considerations:**
+  - Implementing these features requires careful attention to security best practices. This includes:
+    - Securely storing and handling sensitive data like passwords and tokens.
+    - Using `HTTPS` to encrypt communication.
+    - Validating and sanitizing user input to prevent vulnerabilities like cross-site scripting (XSS).
+  - properly securing the web socket connections.
+- **Java Technologies:**
+  - Java Server technologies such as Spring security are often used to implement these features.
+  - Java websocket API's are used to create the websocket connections.
+
+In summary, such a Java web server would provide a secure and real-time communication channel, handling user authentication, token management, and WebSocket connections with appropriate security measures.
 
 ### Project Structure
 
@@ -15,13 +33,14 @@ Project: WebServer
 │   │   ├── java/
 │   │   │   └── org/
 │   │   │       └── file/
-│   │   │           ├── controllers/
+│   │   │           ├── apiResponse/
 │   │   │           │   ├── ApiResponse.java
+│   │   │           │   └── HttpServletErrorResponse.java
+│   │   │           ├── controllers/
 │   │   │           │   ├── AuthController.java
 │   │   │           │   ├── CookieController.java
 │   │   │           │   ├── JwtController.java
-│   │   │           │   ├── MainController.java
-│   │   │           │   └── HttpServletErrorResponse.java
+│   │   │           │   └── MainController.java
 │   │   │           ├── database/
 │   │   │           │   ├── DatabaseConnection.java
 │   │   │           │   ├── DatabaseQueryExecution.java
@@ -29,15 +48,14 @@ Project: WebServer
 │   │   │           │       ├── User.java
 │   │   │           │       └── UserPublicInfo.java
 │   │   │           ├── middleware/
-│   │   │           │   ├── api/
+│   │   │           │   ├── apiGlobals/
 │   │   │           │   │   └── GlobalsExceptionHandler.java
-│   │   │           │   └── api/filters/
-│   │   │           │       ├── AuthFilter.java
-│   │   │           │       ├── CookieFilter.java
-│   │   │           │       ├── FilterConfig.java
-│   │   │           │       ├── FirstFilter.java
-│   │   │           │       └── SecondFilter.java
-│   │   │           ├── middleware/
+│   │   │           │   └── filters/
+│   │   │           │   |   ├── AuthFilter.java
+│   │   │           │   |   ├── CookieFilter.java
+│   │   │           │   |   ├── FilterConfig.java
+│   │   │           │   |   ├── FirstFilter.java
+│   │   │           │   |   └── SecondFilter.java
 │   │   │           │   └── interceptors/
 │   │   │           │       ├── AuthInterceptor.java
 │   │   │           │       ├── CookieInterceptor.java
@@ -45,8 +63,9 @@ Project: WebServer
 │   │   │           │       ├── JwtInterceptor.java
 │   │   │           │       └── MainInterceptor.java
 │   │   │           └── utils/
-│   │   │               ├── BcryptHashing.java
-│   │   │               └── GenerateCookie.java
+│   │   │           |   ├── BcryptHashing.java
+│   │   │           |   ├── JwtUtil.java
+│   │   │           |   └── GenerateCookie.java
 │   │   │           ├── Main.java
 │   │   │           └── webSocket/
 │   │   │               ├── MainWebSocketHandler.java
@@ -58,6 +77,18 @@ Project: WebServer
 ├── .idea/
 └── External Libraries
 ```
+
+## About Spring Boot
+
+Spring Boot simplifies the process of building and running Spring applications. It takes an "opinionated" approach, providing sensible defaults and auto-configuration, which drastically reduces the amount of boilerplate code developers need to write. Essentially, it streamlines Spring development by handling much of the configuration automatically, allowing developers to focus on writing application logic rather than dealing with complex setup.
+
+Key features of Spring Boot include embedded servers (like Tomcat), "starter" dependencies that simplify build configuration, and production-ready features such as health checks and metrics. This makes it incredibly efficient for creating stand-alone, production-grade Spring-based applications that can be easily deployed. In short, Spring Boot prioritizes rapid development and ease of use, making it a popular choice for building modern Java applications.
+
+### For Web Applications
+
+_...from Spring website_
+
+Spring makes building web applications fast and hassle-free. By removing much of the boilerplate code and configuration associated with web development, you get a modern web programming model that streamlines the development of server-side HTML applications, REST APIs, and bidirectional, event-based systems.
 
 In Spring Boot (and Spring in general), annotations like `@Configuration`, `@Component`, `@Controller`, `@Service`, `@Repository`, and others are used to identify the purpose and role of a class within the Spring application context.
 
