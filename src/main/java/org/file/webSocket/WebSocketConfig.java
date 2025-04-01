@@ -55,14 +55,14 @@ public class WebSocketConfig implements WebSocketConfigurer {
                                 return false;
                             }
 
-                            String username = tokenValidator.getUsernameFromToken(token);
-                            if (username == null) {
+                            String userId = tokenValidator.getUserIdFromToken(token);
+                            if (userId == null) {
                                 logger.warn("Invalid token!");
                                 return false;
                             }
 
-                            attributes.put("username", username);
-                            logger.info("WebSocket handshake successful for user: {}", username);
+                            attributes.put("userId", userId);
+                            logger.info("WebSocket handshake successful for user: {}", userId);
                             return true;
                         }
 
@@ -82,7 +82,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     public interface TokenValidator {
         boolean validateToken(String token);
-        String getUsernameFromToken(String token);
+        String getUserIdFromToken(String token);
     }
 
     @Component
@@ -111,7 +111,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
         }
 
         @Override
-        public String getUsernameFromToken(String token) {
+        public String getUserIdFromToken(String token) {
             if (token != null && !token.isEmpty()) {
                 boolean isValid = validateToken(token);
                 if (isValid) {
@@ -122,7 +122,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 }
                 return null;
             }
-            logger.warn("Failed to extract username from token");
+            logger.warn("Failed to extract userId from token");
             return null;
         }
     }

@@ -51,16 +51,11 @@ Project: WebServer
 │   │   │           │   ├── apiGlobals/
 │   │   │           │   │   └── GlobalsExceptionHandler.java
 │   │   │           │   └── filters/
-│   │   │           │   |   ├── AuthFilter.java
-│   │   │           │   |   ├── CookieFilter.java
 │   │   │           │   |   ├── FilterConfig.java
-│   │   │           │   |   ├── FirstFilter.java
-│   │   │           │   |   └── SecondFilter.java
+│   │   │           │   |   └── CookieFilter.java
 │   │   │           │   └── interceptors/
 │   │   │           │       ├── AuthInterceptor.java
-│   │   │           │       ├── CookieInterceptor.java
 │   │   │           │       ├── InterceptorConfig.java
-│   │   │           │       ├── JwtInterceptor.java
 │   │   │           │       └── MainInterceptor.java
 │   │   │           └── utils/
 │   │   │           |   ├── BcryptHashing.java

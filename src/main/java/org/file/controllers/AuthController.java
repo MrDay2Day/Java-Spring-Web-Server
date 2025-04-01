@@ -1,5 +1,7 @@
 package org.file.controllers;
 
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.file.apiResponse.ApiResponse;
 import org.file.database.DatabaseQueryExecution;
@@ -154,6 +156,40 @@ public class AuthController {
 
             return ResponseEntity.ok(new ApiResponse<>(
                     true, "Logout successful."));
+        } catch (Exception e) {
+            logger.error("Error occurred during logout process", e);
+            return ResponseEntity.internalServerError().body(
+                    new ApiResponse<>(false,  "Something went wrong.",
+                            1000023));
+        }
+    }
+
+
+    @GetMapping("/refresh-websocket-token")
+    public ResponseEntity<ApiResponse<?>> refreshWebSocketToken(
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        try {
+
+            Claims claims = (Claims) request.getSession().getAttribute("claims");
+
+            String userId = claims.get("userId", String.class);
+
+            if(userId == null) {
+                return ResponseEntity.status(401).body(
+                        new ApiResponse<>(false, "Unauthorized!",
+                                1000032));
+            }
+
+            Map<String, Object> webSocketClaim = new HashMap<>();
+            webSocketClaim.put("userId", userId);
+
+            String webSocketToken = jwtUtilWebSocket.generateToken(webSocketClaim, 5);
+
+            return ResponseEntity.ok(new ApiResponse<>(
+                    true,
+                    webSocketToken,
+                    "WebSocket token refreshed successfully."));
         } catch (Exception e) {
             logger.error("Error occurred during logout process", e);
             return ResponseEntity.internalServerError().body(

@@ -67,7 +67,6 @@ public class JwtUtil {
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
-        System.err.println(claims);
         return claimsResolver.apply(claims);
     }
 
@@ -77,21 +76,15 @@ public class JwtUtil {
     }
 
     public Date extractExpiration(String token) {
-        Date expDate = extractClaim(token, Claims::getExpiration);
-        System.err.println("ExpDate: " + expDate);
-        return expDate;
+        return extractClaim(token, Claims::getExpiration);
     }
 
     public boolean isTokenExpired(String token) {
-        System.err.println(token);
-        boolean isExpired = extractExpiration(token).before(new Date());
-        System.err.println("isExpired " + isExpired);
-        return isExpired;
+        return extractExpiration(token).before(new Date());
     }
 
     public String generateSignature(String data) {
         try {
-            System.err.println("this.jwtCookieSecret: " + this.jwtCookieSecret);
             SecretKeySpec secretKeySpec = new SecretKeySpec(this.jwtCookieSecret.getBytes(StandardCharsets.UTF_8),
                     "HmacSHA256");
             Mac mac = Mac.getInstance("HmacSHA256");

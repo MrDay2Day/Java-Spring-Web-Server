@@ -27,23 +27,18 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private MainInterceptor mainInterceptor;
     @Autowired
     private AuthInterceptor authInterceptor;
-     @Autowired
-     private CookieInterceptor cookieInterceptor;
 
 
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
-                .addPathPatterns("/secure/**");
+                .addPathPatterns("/secure/**", "/auth/refresh-websocket-token");
 
         registry.addInterceptor(mainInterceptor)
                 .addPathPatterns("/api/**", "/admin/**", "/specific/route")
-                .excludePathPatterns("/public/**", "/login", "/register");
+                .excludePathPatterns();
 
-        /* Adding Additional Interceptor patterns */
-         registry.addInterceptor(cookieInterceptor)
-                 .addPathPatterns("/*");
 
     }
 }

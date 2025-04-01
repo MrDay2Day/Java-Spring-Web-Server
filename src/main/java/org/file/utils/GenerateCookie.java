@@ -72,13 +72,14 @@ public class GenerateCookie {
         String token = jwtUtil.generateToken(this.claim, this.expTime);
         String signedToken = signCookieValue(token);
 
+        clearCookie(response, this.cookieName);
+
         ResponseCookie cookie = ResponseCookie.from(this.cookieName, signedToken)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
                 .maxAge(Duration.ofSeconds(this.expTime))
                 .build();
-
         response.addHeader("Set-Cookie", cookie.toString());
 
         return token;

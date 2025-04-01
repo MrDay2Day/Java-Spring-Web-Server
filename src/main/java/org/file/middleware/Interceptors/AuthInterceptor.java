@@ -67,7 +67,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
             String headerValue = request.getHeader(headerName);
-            logger.info("Header: {} = {}", headerName, headerValue);
+            logger.info("Header: {}", headerName);
         }
 
         // Accessing cookies
@@ -78,6 +78,8 @@ public class AuthInterceptor implements HandlerInterceptor {
                 if (cookie.getName().equals(jwtCookieName)) {
                     String token = new GenerateCookie(jwtUtil).verifyCookie(cookie);
                     if (!jwtUtil.isTokenExpired(token)) {
+                        Claims oldClaims = jwtUtil.extractAllClaims(token);
+                        request.getSession().setAttribute("claims", oldClaims);
                         return true;
                     }
                     break;
@@ -93,22 +95,21 @@ public class AuthInterceptor implements HandlerInterceptor {
                         return false;
                     }
                     Claims oldClaims = jwtUtilRefresh.extractAllClaims(tokenRefresh);
-
+                    request.getSession().setAttribute("claims", oldClaims);
                     GenerateCookie generateJwtCookie = new GenerateCookie(
                             jwtCookieName, jwtExpirationSeconds, oldClaims,
                             response,
                             jwtUtil);
                     String newToken = generateJwtCookie.generateToken();
-                    oldClaims.put("jwt", newToken);
                     GenerateCookie generateRefreshJwtCookie = new GenerateCookie(
                             jwtRefreshCookieName, jwtExpirationRefreshSeconds, oldClaims,
                             response,
                             jwtUtilRefresh);
-                    System.err.println("\n\n\nInterceptor newToken: " + newToken);
+//                    System.err.println("\n\n\nInterceptor newToken: " + newToken);
                     String newTokenRefresh = generateRefreshJwtCookie.generateToken();
-                    System.out.println("\n\nInterceptor Refresh Successfully. \n\n" +
-                            "AuthToken: " + newToken + "\n" +
-                            "Refresh Token: " + newTokenRefresh);
+//                    System.out.println("\n\nInterceptor Refresh Successfully. \n\n" +
+//                            "AuthToken: " + newToken + "\n" +
+//                            "Refresh Token: " + newTokenRefresh);
                     return true;
                 }
             }
