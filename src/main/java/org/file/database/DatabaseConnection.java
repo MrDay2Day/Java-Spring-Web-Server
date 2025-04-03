@@ -19,14 +19,7 @@ public class DatabaseConnection {
         this.secondaryDataSource = secondaryDataSource;
     }
 
-//    public Connection getPrimaryConnection() throws SQLException {
-//        return primaryDataSource.getConnection();
-//    }
-//
-//    public Connection getSecondaryConnection() throws SQLException {
-//        return secondaryDataSource.getConnection();
-//    }
-
+    // Method to select the appropriate DataSource based on the DatabaseType
     public Connection selectConnection(DatabaseType databaseType) throws SQLException {
 
         return switch (databaseType) {

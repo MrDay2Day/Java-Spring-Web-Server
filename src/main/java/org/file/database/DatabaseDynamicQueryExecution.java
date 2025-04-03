@@ -28,7 +28,7 @@ public class DatabaseDynamicQueryExecution {
         }
     }
     // Execute SELECT query and return results
-    public <T> List<T> executeSelectQuery(String query, Function<ResultSet, T> mapper, Object... params) {
+    public <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper, Object... params) {
 
         List<T> results = new ArrayList<>();
         try (Connection connection = databaseConnection.selectConnection(databaseType); PreparedStatement statement = connection.prepareStatement(query)) {
@@ -46,12 +46,12 @@ public class DatabaseDynamicQueryExecution {
             }
 
         } catch (SQLException e) {
-            logger.error("Error executing SELECT query: {}", query, e);
+            logger.error("Error executing query: {}", query, e);
         }
         return results;
     }
 
-    public ResultSet executeSelectQuery(String query, Object... params) {
+    public ResultSet executeQuery(String query, Object... params) {
 
         try (Connection connection = databaseConnection.selectConnection(databaseType); PreparedStatement statement = connection.prepareStatement(query)) {
 

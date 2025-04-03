@@ -95,7 +95,7 @@ public class AuthController {
 
             // Execute SQL query with parameters to prevent SQL Injection
             // Fetch list of users
-            List<User> users = databasePrimaryQueryExecution.executeSelectQuery(
+            List<User> users = databasePrimaryQueryExecution.executeQuery(
                     "SELECT *, dob FROM users WHERE email = ?",
                     User::mapUser, // Pass User mapping method
                     email.trim().toLowerCase()

@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Configuration
 public class DataSourceConfig {
-
+    // PostgreSQL DataSource Credentials
     @Value("${postgresql.conn.host}")
     private String postgresql_host;
     @Value("${postgresql.conn.database}")
@@ -22,7 +22,7 @@ public class DataSourceConfig {
     @Value("${postgresql.conn.password}")
     private String postgresql_password;
 
-
+    // MySQL DataSource Credentials
     @Value("${mysql.conn.host}")
     private String mysql_host;
     @Value("${mysql.conn.database}")
@@ -32,6 +32,7 @@ public class DataSourceConfig {
     @Value("${mysql.conn.password}")
     private String mysql_password;
 
+    // PostgreSQL DataSource
     @Bean
     public DataSource primaryDataSource() {
         return DataSourceBuilder.create()
@@ -42,6 +43,7 @@ public class DataSourceConfig {
 
     }
 
+    // MySQL DataSource
     @Bean
     public DataSource secondaryDataSource() {
         return DataSourceBuilder.create()
@@ -51,6 +53,7 @@ public class DataSourceConfig {
                 .build();
     }
 
+    // Map of DataSources
     @Bean
     public Map<String, DataSource> dataSources(
             @Qualifier("primaryDataSource") DataSource primaryDataSource,
