@@ -1,24 +1,107 @@
-# Spring Web Server Example
+# Java Spring Web Server with 
+## JWT Authentication, Secure Cookies, Refresh Tokens, Multi-DB, and Websockets
 
-A Java web server example demonstrating secure communication would typically involve these key components:
+This repository contains a Java Spring web server implementation that demonstrates robust authentication, session management, and real-time communication capabilities.
 
-- **Authentication:**
-  - This ensures that only authorized users can access the server's resources. Common methods include `username`/`password` validation, and more robustly, token-based authentication like `JWT` (JSON Web Tokens).
-- **Token Refresh:**
-  - To enhance security and user experience, access tokens often have a limited lifespan. Token refresh mechanisms allow clients to obtain new access tokens without requiring users to re-enter their credentials. This is often done using refresh tokens.
-- **WebSockets:**
-  - WebSockets enable real-time, bidirectional communication between the client and server. This is crucial for applications requiring instant updates, such as chat applications or live data feeds.
-- **Security Considerations:**
-  - Implementing these features requires careful attention to security best practices. This includes:
-    - Securely storing and handling sensitive data like passwords and tokens.
-    - Using `HTTPS` to encrypt communication.
-    - Validating and sanitizing user input to prevent vulnerabilities like cross-site scripting (XSS).
-  - properly securing the web socket connections.
-- **Java Technologies:**
-  - Java Server technologies such as Spring security are often used to implement these features.
-  - Java websocket API's are used to create the websocket connections.
+## Features
 
-In summary, such a Java web server would provide a secure and real-time communication channel, handling user authentication, token management, and WebSocket connections with appropriate security measures.
+* **JWT Authentication:** Uses JSON Web Tokens (JWT) for secure authentication and authorization.
+* **Secure Cookies:** Stores JWTs in secure, HTTP-only cookies to mitigate XSS attacks.
+* **Refresh Tokens:** Implements refresh tokens for seamless session renewal, enhancing security and user experience.
+* **Multi-Database Support:** Configured to handle multiple database connections, allowing for flexible data management.
+* **Websocket Communication:** Integrates Websockets for real-time, bidirectional communication.
+* **Spring Boot:** Built using Spring Boot for rapid application development and deployment.
+* **Spring Security:** Leverages Spring Security for comprehensive security features.
+* **Dependency Injection:** Uses Spring's dependency injection for loose coupling and testability.
+* **RESTful API:** Provides a RESTful API for client interaction.
+
+## Technologies Used
+
+* **Java:** Programming language.
+* **Spring Boot:** Framework for rapid application development.
+* **Spring Security:** Framework for authentication and authorization.
+* **Spring Web:** For building web applications.
+* **Spring Data JPA:** For database interaction.
+* **JSON Web Token (JWT):** For token-based authentication.
+* **Websocket (Spring Websocket):** For real-time communication.
+* **PostgreSQL, MySQL:** For database storage.
+
+## Setup Instructions
+
+1.  **Clone the Repository:**
+    ```bash
+    git clone [repository URL]
+    cd [repository directory]
+    ```
+
+2.  **Configure Database Connections:**
+    * Modify the `application.properties` file to configure your database connections.
+    * Specify the database URLs, usernames, passwords, and drivers.
+
+3.  **Build the Project:**
+    * Use Maven or Gradle to build the project.
+        * **Maven:** `mvn clean install`
+
+4.  **Run the Application:**
+    * Run the Spring Boot application from your IDE or using the following command:
+        * **Maven:** `mvn spring-boot:run`
+
+5.  **Access the API:**
+    * The application will be accessible at `http://localhost:3077`.
+    * Refer to the API documentation (if provided) for endpoints and usage.
+
+## API Endpoints (Example)
+
+* `POST /auth/register`: Register a new user.
+* `POST /auth/login`: Authenticate a user and obtain JWTs.
+* `POST /auth/logout`: Logout, terminate session.
+* `GET /auth/refresh-websocket-token`: JWT for web socket connection token (requires authentication).
+* `POST /secure/send-websocket-message`: Send test WS message to user (requires authentication).
+* `/ws?token=[JWT_token]`: Websocket endpoint for real-time communication.
+* `GET /secure/get`: Test GET (requires authentication).
+
+
+
+## Security Considerations
+
+* JWTs are stored in secure, HTTP-only cookies to prevent client-side JavaScript access.
+* Refresh tokens are used to minimize the exposure of long-lived access tokens, tokens are refreshed automatically via `interceptors`.
+* Spring Security is configured to enforce proper authentication and authorization.
+* Input validation and output encoding are implemented to prevent common security vulnerabilities.
+* Always use HTTPS in production.
+
+## Database setup.
+
+* Please refer to the `application.properties` file for database connection details and 
+`org/file/database/models/User.java` for the user table structure.
+* 
+## Websocket usage.
+
+* Connect to the /ws endpoint using a websocket client.
+* Get the JWT token from the `/auth/refresh-websocket-token` endpoint then pass in URL as `param`.
+* Send test messages `POST /secure/send-websocket-message`
+```json
+{
+    "userId": "3",
+    "message": "Hello World!"
+}
+```
+* The server will handle real time bi-directional messages.
+
+## Future Improvements
+
+* Implement comprehensive unit and integration tests.
+* Add API documentation using Swagger or OpenAPI.
+* Improve error handling and logging.
+* Implement role-based access control (RBAC).
+* Add more advanced websocket functionality.
+* Containerize the application using Docker.
+* Add CI/CD pipelines.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit pull requests or open issues for bug fixes or feature requests.
+
 
 ### Project Structure
 
@@ -42,8 +125,11 @@ Project: WebServer
 │   │   │           │   ├── JwtController.java
 │   │   │           │   └── MainController.java
 │   │   │           ├── database/
+│   │   │           │   ├── DatabaseType.java
+│   │   │           │   ├── DataSourceConfig.java
 │   │   │           │   ├── DatabaseConnection.java
 │   │   │           │   ├── DatabaseQueryExecution.java
+│   │   │           │   ├── DatabaseDynamicQueryExecution.java
 │   │   │           │   └── models/
 │   │   │           │       ├── User.java
 │   │   │           │       └── UserPublicInfo.java
@@ -142,3 +228,9 @@ Here's a breakdown of the key annotations:
 - Configuration: Spring uses `@Configuration` and `@Bean` to create and manage beans defined in Java configuration classes.
 
 In essence, these annotations provide metadata that Spring uses to understand the role and purpose of each class, enabling it to manage the application's components and their dependencies
+
+
+
+## License
+
+[License, e.g., MIT License]

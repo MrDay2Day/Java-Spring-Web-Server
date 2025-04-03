@@ -8,6 +8,11 @@
           <option value="WebServer" />
           <option value="WebServer" />
           <option value="WebServer" />
+          <option value="WebServer" />
+          <option value="WebServer" />
+          <option value="WebServer" />
+          <option value="WebServer" />
+          <option value="WebServer" />
         </list>
       </option>
       <option name="ignoredPackages">
@@ -15,12 +20,22 @@
           <option value="ch.qos.logback:logback-classic:1.4.11" />
           <option value="com.jayway.jsonpath:json-path:2.8.0" />
           <option value="org.apache.tomcat.embed:tomcat-embed-core:10.1.16" />
+          <option value="org.xmlunit:xmlunit-core:2.9.1" />
+          <option value="org.apache.tomcat.embed:tomcat-embed-websocket:10.1.16" />
+          <option value="org.springframework:spring-web:6.1.1" />
+          <option value="org.springframework:spring-webmvc:6.1.1" />
+          <option value="org.springframework:spring-context:6.1.1" />
         </list>
       </option>
       <option name="ignoredReasons">
         <list>
           <option value="Not exploitable" />
           <option value="Fixed in branch" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
+          <option value="Not exploitable" />
           <option value="Not exploitable" />
         </list>
       </option>

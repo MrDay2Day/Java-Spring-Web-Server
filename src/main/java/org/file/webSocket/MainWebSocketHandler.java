@@ -72,12 +72,11 @@ public class MainWebSocketHandler extends TextWebSocketHandler {
                     newSessions.add(session);
                     userSessions.put(userId, newSessions);
                 }
+                cleanupConnections(userId); // Clean up any closed sessions
+
+                logger.info("WebSocket connection established for user: {}", userId);
+                logger.info("Current active sessions: {}", userSessions.keySet());
             }
-
-            cleanupConnections(userId); // Clean up any closed sessions
-
-            logger.info("WebSocket connection established for user: {}", userId);
-            logger.info("Current active sessions: {}", userSessions.keySet());
         } else {
             logger.warn("WebSocket connection established without userId attribute.");
             session.close(CloseStatus.POLICY_VIOLATION);
@@ -90,9 +89,10 @@ public class MainWebSocketHandler extends TextWebSocketHandler {
         if (userId != null) {
             synchronized (userSessions) {
                 cleanupConnections(userId); // Clean up any closed sessions
+                logger.info("WebSocket connection closed for user: {}, status: {}", userId, status);
             }
 
-            logger.info("WebSocket connection closed for user: {}, status: {}", userId, status);
+
         }
     }
 
@@ -117,35 +117,32 @@ public class MainWebSocketHandler extends TextWebSocketHandler {
         ArrayList<WebSocketSession> userSession;
         synchronized (userSessions) {
             userSession = userSessions.get(userId);
-        }
-
-        if (userSession == null || userSession.isEmpty()) {
-            logger.warn("No active session found for user: {}", userId);
-            throw new IOException("No active WebSocket session for user: " + userId);
-        }else{
-            for (WebSocketSession session : userSession) {
-                if (session != null && session.isOpen()) {
-                    try {
-                        logger.info("Sending message to user {}: {}", userId, message);
-                        session.sendMessage(new TextMessage(message));
-                    } catch (IOException e) {
-                        logger.error("Error sending message to user {}: {}", userId, e.getMessage());
+            if (userSession == null || userSession.isEmpty()) {
+                logger.warn("No active session found for user: {}", userId);
+                throw new IOException("No active WebSocket session for user: " + userId);
+            }else{
+                for (WebSocketSession session : userSession) {
+                    if (session != null && session.isOpen()) {
+                        try {
+                            logger.info("Sending message to user {}: {}", userId, message);
+                            session.sendMessage(new TextMessage(message));
+                        } catch (IOException e) {
+                            logger.error("Error sending message to user {}: {}", userId, e.getMessage());
+                            synchronized (userSessions) {
+                                userSessions.remove(userId);
+                            }
+                            throw e;
+                        }
+                    } else {
+                        logger.warn("No active session found for user: {}", userId);
                         synchronized (userSessions) {
                             userSessions.remove(userId);
                         }
-                        throw e;
+                        throw new IOException("No active WebSocket session for user: " + userId);
                     }
-                } else {
-                    logger.warn("No active session found for user: {}", userId);
-                    synchronized (userSessions) {
-                        userSessions.remove(userId);
-                    }
-                    throw new IOException("No active WebSocket session for user: " + userId);
                 }
             }
-
         }
-
     }
 
     // Helper method to extract userId consistently

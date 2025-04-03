@@ -4,7 +4,9 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.file.apiResponse.ApiResponse;
-import org.file.database.DatabaseQueryExecution;
+import org.file.database.DatabaseConnection;
+import org.file.database.DatabaseDynamicQueryExecution;
+import org.file.database.DatabaseType;
 import org.file.database.models.User;
 import org.file.utils.BcryptHashing;
 import org.file.utils.GenerateCookie;
@@ -28,10 +30,12 @@ import java.util.Map;
 public class AuthController {
     private static JwtUtil jwtUtilWebSocket;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-    private final DatabaseQueryExecution databaseQueryExecution;
-    private final JwtUtil jwtUtil;
-    private final JwtUtil jwtUtilRefresh;
+    private static JwtUtil jwtUtil;
+    private static JwtUtil jwtUtilRefresh;
 
+
+    private final DatabaseDynamicQueryExecution databasePrimaryQueryExecution;
+    private final DatabaseDynamicQueryExecution databaseSecondaryQueryExecution;
     @Value("${jwt.cookie.name}") // Set this in application.properties or application.yml
     private String jwtCookieName;
 
@@ -48,16 +52,21 @@ public class AuthController {
 
     // Constructor-based Dependency Injection
     public AuthController(
-            DatabaseQueryExecution databaseQueryExecution,
+            DatabaseConnection databaseConnection,
             @Value("${jwt.websocket.secret}") String jwtWebSocketSecret,
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.refresh.secret}") String secretRefresh,
             @Value("${jwt.cookie.secret}") String cookieSecret
     ) {
-        this.databaseQueryExecution = databaseQueryExecution;
+        this.databasePrimaryQueryExecution  = new DatabaseDynamicQueryExecution(databaseConnection);
+        this.databasePrimaryQueryExecution.selectDatabase(DatabaseType.PRIMARY);
+
+        this.databaseSecondaryQueryExecution = new DatabaseDynamicQueryExecution(databaseConnection);
+        this.databaseSecondaryQueryExecution.selectDatabase(DatabaseType.SECONDARY);
+
         jwtUtilWebSocket = new JwtUtil(jwtWebSocketSecret);
-        this.jwtUtil = new JwtUtil(secret, cookieSecret);
-        this.jwtUtilRefresh = new JwtUtil(secretRefresh, cookieSecret);
+        jwtUtil = new JwtUtil(secret, cookieSecret);
+        jwtUtilRefresh = new JwtUtil(secretRefresh, cookieSecret);
     }
 
     @PostMapping("/login")
@@ -86,7 +95,7 @@ public class AuthController {
 
             // Execute SQL query with parameters to prevent SQL Injection
             // Fetch list of users
-            List<User> users = databaseQueryExecution.executeSelectQuery(
+            List<User> users = databasePrimaryQueryExecution.executeSelectQuery(
                     "SELECT *, dob FROM users WHERE email = ?",
                     User::mapUser, // Pass User mapping method
                     email.trim().toLowerCase()
