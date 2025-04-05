@@ -26,7 +26,7 @@ Welcome to the definitive implementation of a production-ready Java Spring Web S
 * **Spring Security** 🔒 - Comprehensive security framework with secure defaults
 * **Spring WebFlux** ⚛️ - Reactive programming model for highly concurrent applications
 * **Spring Data JPA** 📊 - Advanced ORM with sophisticated query capabilities
-* **JJWT Library** 🎟️ - Industry-standard JWT implementation with robust signature verification
+* **JWT Library** 🎟️ - Industry-standard JWT implementation with robust signature verification
 * **Spring WebSocket** 🔌 - Enterprise-grade WebSocket implementation with STOMP messaging
 * **Hibernate** 🗄️ - Feature-rich JPA provider with extensive customization options
 
