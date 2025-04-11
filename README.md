@@ -237,7 +237,6 @@ Includes unit, integration, and end-to-end tests with JUnit 5, Mockito, and Spri
 │   │   │           ├── controllers/
 │   │   │           │   ├── AuthController.java
 │   │   │           │   ├── CookieController.java
-│   │   │           │   ├── JwtController.java
 │   │   │           │   └── MainController.java
 │   │   │           ├── database/
 │   │   │           │   ├── DatabaseType.java
