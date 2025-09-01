@@ -96,7 +96,7 @@ public class AuthController {
             // Execute SQL query with parameters to prevent SQL Injection
             // Fetch list of users
             List<User> users = databasePrimaryQueryExecution.executeQuery(
-                    "SELECT *, dob FROM users WHERE email = ?",
+                    "SELECT * FROM users WHERE email = ?",
                     User::mapUser, // Pass User mapping method
                     email.trim().toLowerCase()
             );
@@ -209,23 +209,23 @@ public class AuthController {
 
 
     private void getGenerateCookie(HttpServletResponse response, User user) {
-        Map<String, Object> authCliams = new HashMap<>();
-        authCliams.put("userId", String.valueOf(user.getId()));
-        authCliams.put("email", user.getEmail());
-        authCliams.put("firstName", user.getFirstName());
-        authCliams.put("lastName", user.getLastName());
+        Map<String, Object>authClaims = new HashMap<>();
+        authClaims.put("userId", String.valueOf(user.getId()));
+        authClaims.put("email", user.getEmail());
+        authClaims.put("firstName", user.getFirstName());
+        authClaims.put("lastName", user.getLastName());
 
         GenerateCookie generateJwtCookie = new GenerateCookie(
                 jwtCookieName,
                 jwtExpirationSeconds,
-                authCliams,
+                authClaims,
                 response,
                 jwtUtil );
         String token = generateJwtCookie.generateToken();
         GenerateCookie generateRefreshJwtCookie = new GenerateCookie(
                 jwtRefreshCookieName,
                 jwtExpirationRefreshSeconds,
-                authCliams,
+                authClaims,
                 response,
                 jwtUtilRefresh );
         String refreshToken = generateRefreshJwtCookie.generateToken();
