@@ -22,6 +22,8 @@ public class DataSourceConfig {
     @Value("${postgresql.conn.password}")
     private String postgresql_password;
 
+
+
     // MySQL DataSource Credentials
     @Value("${mysql.conn.host}")
     private String mysql_host;
@@ -31,6 +33,9 @@ public class DataSourceConfig {
     private String mysql_username;
     @Value("${mysql.conn.password}")
     private String mysql_password;
+
+
+
 
     // PostgreSQL DataSource
     @Bean
@@ -47,7 +52,7 @@ public class DataSourceConfig {
     @Bean
     public DataSource secondaryDataSource() {
         return DataSourceBuilder.create()
-                .url("jdbc:mysql://"+mysql_database+"/"+mysql_host)
+                .url("jdbc:mysql://"+ mysql_host + "/" + mysql_database)
                 .username(mysql_username)
                 .password(mysql_password)
                 .build();

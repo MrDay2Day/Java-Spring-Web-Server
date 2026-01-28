@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,61 @@ public class AuthController {
         jwtUtilWebSocket = new JwtUtil(jwtWebSocketSecret);
         jwtUtil = new JwtUtil(secret, cookieSecret);
         jwtUtilRefresh = new JwtUtil(secretRefresh, cookieSecret);
+    }
+
+
+    @PostMapping("/sign_up")
+    public ResponseEntity<ApiResponse<?>> sign_up(
+            @RequestBody Map<String, String> requestBody,
+            HttpServletResponse response
+    ) {
+        try {
+            // 1. Validation
+            if (requestBody == null || !requestBody.containsKey("email") || !requestBody.containsKey("password")) {
+                return ResponseEntity.badRequest().body(
+                        new ApiResponse<>(false, null, "Invalid Request", "Email and Password are required.", 1000030));
+            }
+
+            String email = requestBody.get("email").trim().toLowerCase();
+            String password = requestBody.get("password"); // Note: You should hash this!
+
+            if (email.isBlank() || password.isBlank()) {
+                return ResponseEntity.badRequest().body(
+                        new ApiResponse<>(false, null, "Missing Credentials", "Email and Password are required.", 1000031));
+            }
+
+            // Check if user exists
+            List<User> users = databasePrimaryQueryExecution.executeQuery(
+                    "SELECT * FROM users WHERE email = ?",
+                    User::mapUser,
+                    email
+            );
+
+            if (!users.isEmpty()) {
+                return ResponseEntity.status(409).body( // 409 Conflict
+                        new ApiResponse<>(false, "Email is already in use", 1000032));
+            }
+
+            // Execute Insert
+            int rowsAffected = databasePrimaryQueryExecution.executeInsertQuery(
+                    "INSERT INTO users (email, password) VALUES (?, ?)",
+                    email,
+                    password
+            );
+
+            if (rowsAffected > 0) {
+                return ResponseEntity.ok(new ApiResponse<>(
+                        true, "User registered successfully", "Successful SignUp"));
+            } else {
+                return ResponseEntity.internalServerError().body(
+                        new ApiResponse<>(false, "Failed to create user record", 1000033));
+            }
+
+        } catch (Exception e) {
+            logger.error("Error occurred during sign up process", e);
+            return ResponseEntity.internalServerError().body(
+                    new ApiResponse<>(false, "Something went wrong.", 1000034));
+        }
     }
 
     @PostMapping("/login")

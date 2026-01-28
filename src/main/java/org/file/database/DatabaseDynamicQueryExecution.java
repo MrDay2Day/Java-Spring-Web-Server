@@ -27,6 +27,7 @@ public class DatabaseDynamicQueryExecution {
             throw new RuntimeException(e);
         }
     }
+
     // Execute SELECT query and return results
     public <T> List<T> executeQuery(String query, Function<ResultSet, T> mapper, Object... params) {
 
