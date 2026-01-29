@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.sql.ResultSet;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,7 @@ public class AuthController {
 
 
     private final DatabaseDynamicQueryExecution databasePrimaryQueryExecution;
-    private final DatabaseDynamicQueryExecution databaseSecondaryQueryExecution;
+    // private final DatabaseDynamicQueryExecution databaseSecondaryQueryExecution;
     @Value("${jwt.cookie.name}") // Set this in application.properties or application.yml
     private String jwtCookieName;
 
@@ -62,8 +64,8 @@ public class AuthController {
         this.databasePrimaryQueryExecution  = new DatabaseDynamicQueryExecution(databaseConnection);
         this.databasePrimaryQueryExecution.selectDatabase(DatabaseType.PRIMARY);
 
-        this.databaseSecondaryQueryExecution = new DatabaseDynamicQueryExecution(databaseConnection);
-        this.databaseSecondaryQueryExecution.selectDatabase(DatabaseType.SECONDARY);
+        // this.databaseSecondaryQueryExecution = new DatabaseDynamicQueryExecution(databaseConnection);
+        // this.databaseSecondaryQueryExecution.selectDatabase(DatabaseType.SECONDARY);
 
         jwtUtilWebSocket = new JwtUtil(jwtWebSocketSecret);
         jwtUtil = new JwtUtil(secret, cookieSecret);
@@ -77,18 +79,34 @@ public class AuthController {
             HttpServletResponse response
     ) {
         try {
-            // 1. Validation
+
             if (requestBody == null || !requestBody.containsKey("email") || !requestBody.containsKey("password")) {
                 return ResponseEntity.badRequest().body(
                         new ApiResponse<>(false, null, "Invalid Request", "Email and Password are required.", 1000030));
             }
 
             String email = requestBody.get("email").trim().toLowerCase();
-            String password = requestBody.get("password"); // Note: You should hash this!
+            String password = requestBody.get("password");
 
-            if (email.isBlank() || password.isBlank()) {
+            String firstName = requestBody.getOrDefault("firstName", "").trim();
+            String lastName = requestBody.getOrDefault("lastName", "").trim();
+
+            LocalDate dob = null;
+            try {
+                String dobString = requestBody.get("dob");
+                if (dobString != null && !dobString.isBlank()) {
+                    // Format (yyyy-MM-dd).
+                    // If using a different format, use: LocalDate.parse(dobString, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    dob = LocalDate.parse(dobString);
+                }
+            } catch (DateTimeParseException e) {
                 return ResponseEntity.badRequest().body(
-                        new ApiResponse<>(false, null, "Missing Credentials", "Email and Password are required.", 1000031));
+                        new ApiResponse<>(false, null, "Invalid Date Format", "Date of birth must be yyyy-MM-dd", 1000031));
+            }
+
+            if (email.isBlank() || password.isBlank() || firstName.isBlank() || lastName.isBlank()) {
+                return ResponseEntity.badRequest().body(
+                        new ApiResponse<>(false, null, "Missing Credentials", "First name, Last name, Email and Password are required.", 1000031));
             }
 
             // Check if user exists
@@ -105,9 +123,9 @@ public class AuthController {
 
             // Execute Insert
             int rowsAffected = databasePrimaryQueryExecution.executeInsertQuery(
-                    "INSERT INTO users (email, password) VALUES (?, ?)",
+                    "INSERT INTO users (email, password, firstName, lastName, dob) VALUES (?, ?, ?, ?, dob)",
                     email,
-                    password
+                    password, firstName, lastName, dob
             );
 
             if (rowsAffected > 0) {
