@@ -2,6 +2,7 @@ package org.file.utils;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+
 public class BcryptHashing {
     public static String hashPassword(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt(12));

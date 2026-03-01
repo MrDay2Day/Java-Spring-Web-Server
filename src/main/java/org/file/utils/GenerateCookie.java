@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 
+
 public class GenerateCookie {
 
     @Value("${jwt.cookie.name}")
@@ -33,11 +34,11 @@ public class GenerateCookie {
     private String cookieName;
     private HttpServletResponse response;
     private jakarta.servlet.http.HttpServletRequest request;
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
 
-    public  GenerateCookie(JwtUtil _jwtUtil){
-        this.jwtUtil = _jwtUtil;
+    public  GenerateCookie(JwtUtil jwtUtil){
+        this.jwtUtil = jwtUtil;
     };
 
     public GenerateCookie(String _cookieName, int _expTime,

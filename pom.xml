@@ -14,6 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <!--        Master Template        -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -21,7 +22,7 @@
     </parent>
 
     <dependencies>
-        <!--        Spring Framework        -->
+        <!--        Spring Framework - Boot        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -54,6 +55,7 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
+
         <!--        Databases Management        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -69,6 +71,7 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
         </dependency>
+
         <!--        Encryption        -->
         <dependency>
             <groupId>org.mindrot</groupId>

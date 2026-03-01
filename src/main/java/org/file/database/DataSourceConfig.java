@@ -23,7 +23,6 @@ public class DataSourceConfig {
     private String postgresql_password;
 
 
-
     // MySQL DataSource Credentials
     @Value("${mysql.conn.host}")
     private String mysql_host;
@@ -35,13 +34,11 @@ public class DataSourceConfig {
     private String mysql_password;
 
 
-
-
     // PostgreSQL DataSource
     @Bean
     public DataSource primaryDataSource() {
         return DataSourceBuilder.create()
-                .url("jdbc:postgresql://"+postgresql_host+"/"+postgresql_database)
+                .url("jdbc:postgresql://" + postgresql_host + "/" + postgresql_database)
                 .username(postgresql_username)
                 .password(postgresql_password)
                 .build();
@@ -52,7 +49,7 @@ public class DataSourceConfig {
     @Bean
     public DataSource secondaryDataSource() {
         return DataSourceBuilder.create()
-                .url("jdbc:mysql://"+ mysql_host + "/" + mysql_database)
+                .url("jdbc:mysql://" + mysql_host + "/" + mysql_database)
                 .username(mysql_username)
                 .password(mysql_password)
                 .build();
@@ -62,7 +59,8 @@ public class DataSourceConfig {
     @Bean
     public Map<String, DataSource> dataSources(
             @Qualifier("primaryDataSource") DataSource primaryDataSource,
-            @Qualifier("secondaryDataSource") DataSource secondaryDataSource) {
+            @Qualifier("secondaryDataSource") DataSource secondaryDataSource
+    ) {
         Map<String, DataSource> dataSources = new HashMap<>();
         dataSources.put("primary", primaryDataSource);
         dataSources.put("secondary", secondaryDataSource);

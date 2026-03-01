@@ -16,10 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.ResultSet;
 import java.time.LocalDate;
@@ -28,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/auth")
 public class AuthController {
     private static JwtUtil jwtUtilWebSocket;
@@ -38,7 +35,8 @@ public class AuthController {
 
 
     private final DatabaseDynamicQueryExecution databasePrimaryQueryExecution;
-    // private final DatabaseDynamicQueryExecution databaseSecondaryQueryExecution;
+     private final DatabaseDynamicQueryExecution databaseSecondaryQueryExecution;
+
     @Value("${jwt.cookie.name}") // Set this in application.properties or application.yml
     private String jwtCookieName;
 
@@ -61,11 +59,12 @@ public class AuthController {
             @Value("${jwt.refresh.secret}") String secretRefresh,
             @Value("${jwt.cookie.secret}") String cookieSecret
     ) {
-        this.databasePrimaryQueryExecution  = new DatabaseDynamicQueryExecution(databaseConnection);
-        this.databasePrimaryQueryExecution.selectDatabase(DatabaseType.PRIMARY);
+//        this.databasePrimaryQueryExecution  = new DatabaseDynamicQueryExecution(databaseConnection);
+//        this.databasePrimaryQueryExecution.selectDatabase(DatabaseType.PRIMARY);
+        this.databasePrimaryQueryExecution  = new DatabaseDynamicQueryExecution(databaseConnection, DatabaseType.PRIMARY);
 
-        // this.databaseSecondaryQueryExecution = new DatabaseDynamicQueryExecution(databaseConnection);
-        // this.databaseSecondaryQueryExecution.selectDatabase(DatabaseType.SECONDARY);
+         this.databaseSecondaryQueryExecution = new DatabaseDynamicQueryExecution(databaseConnection);
+         this.databaseSecondaryQueryExecution.selectDatabase(DatabaseType.SECONDARY);
 
         jwtUtilWebSocket = new JwtUtil(jwtWebSocketSecret);
         jwtUtil = new JwtUtil(secret, cookieSecret);
@@ -110,7 +109,7 @@ public class AuthController {
             }
 
             // Check if user exists
-            List<User> users = databasePrimaryQueryExecution.executeQuery(
+            List<User> users = this.databasePrimaryQueryExecution.executeQuery(
                     "SELECT * FROM users WHERE email = ?",
                     User::mapUser,
                     email
@@ -122,7 +121,7 @@ public class AuthController {
             }
 
             // Execute Insert
-            int rowsAffected = databasePrimaryQueryExecution.executeInsertQuery(
+            int rowsAffected = this.databasePrimaryQueryExecution.executeInsertQuery(
                     "INSERT INTO users (email, password, firstName, lastName, dob) VALUES (?, ?, ?, ?, dob)",
                     email,
                     password, firstName, lastName, dob
@@ -169,7 +168,7 @@ public class AuthController {
 
             // Execute SQL query with parameters to prevent SQL Injection
             // Fetch list of users
-            List<User> users = databasePrimaryQueryExecution.executeQuery(
+            List<User> users = this.databasePrimaryQueryExecution.executeQuery(
                     "SELECT * FROM users WHERE email = ?",
                     User::mapUser, // Pass User mapping method
                     email.trim().toLowerCase()
@@ -234,8 +233,8 @@ public class AuthController {
             HttpServletResponse response) {
         try {
             // Clear the cookies
-            GenerateCookie.clearCookie(response, jwtCookieName);
-            GenerateCookie.clearCookie(response, jwtRefreshCookieName);
+            GenerateCookie.clearCookie(response, this.jwtCookieName);
+            GenerateCookie.clearCookie(response, this.jwtRefreshCookieName);
 
             return ResponseEntity.ok(new ApiResponse<>(
                     true, "Logout successful."));
@@ -290,15 +289,15 @@ public class AuthController {
         authClaims.put("lastName", user.getLastName());
 
         GenerateCookie generateJwtCookie = new GenerateCookie(
-                jwtCookieName,
-                jwtExpirationSeconds,
+                this.jwtCookieName,
+                this.jwtExpirationSeconds,
                 authClaims,
                 response,
                 jwtUtil );
         String token = generateJwtCookie.generateToken();
         GenerateCookie generateRefreshJwtCookie = new GenerateCookie(
-                jwtRefreshCookieName,
-                jwtExpirationRefreshSeconds,
+                this.jwtRefreshCookieName,
+                this.jwtExpirationRefreshSeconds,
                 authClaims,
                 response,
                 jwtUtilRefresh );

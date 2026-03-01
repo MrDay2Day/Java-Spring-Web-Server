@@ -19,6 +19,16 @@ public class DatabaseDynamicQueryExecution {
         this.databaseConnection = databaseConnection;
     }
 
+    public DatabaseDynamicQueryExecution(DatabaseConnection databaseConnection, DatabaseType databaseType) {
+        try {
+            this.databaseConnection = databaseConnection;
+            this.databaseType = databaseType;
+        } catch (IllegalArgumentException e) {
+            logger.error("Error selecting database: {}", databaseType, e);
+            throw new RuntimeException(e);
+        }
+    }
+
     public void selectDatabase(DatabaseType databaseType) {
         try {
             this.databaseType = databaseType;

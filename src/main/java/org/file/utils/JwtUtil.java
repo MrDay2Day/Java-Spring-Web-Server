@@ -34,14 +34,14 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public JwtUtil(String secret, String _jwtCookieSecret) {
+    public JwtUtil(String secret, String jwtCookieSecret) {
         // Ensure secret is sufficiently long
         if (secret.length() < 32) {
             throw new IllegalArgumentException("Secret key must be at least 256 bits long");
         }
 
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.jwtCookieSecret = _jwtCookieSecret;
+        this.jwtCookieSecret = jwtCookieSecret;
     }
 
 

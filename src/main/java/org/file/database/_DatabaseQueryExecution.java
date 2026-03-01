@@ -1,20 +1,11 @@
-//package org.file.database;
-//
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.springframework.stereotype.Component;
-//
-//import java.sql.*;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.function.Function;
-//
+package org.file.database;
+
 //@Component
-//public class DatabaseQueryExecution {
-//    private static final Logger logger = LoggerFactory.getLogger(DatabaseQueryExecution.class);
+public class _DatabaseQueryExecution {
+//    private static final Logger logger = LoggerFactory.getLogger(_DatabaseQueryExecution.class);
 //    private final DatabaseConnection databaseConnection;
 //
-//    public DatabaseQueryExecution(DatabaseConnection databaseConnection) {
+//    public _DatabaseQueryExecution(DatabaseConnection databaseConnection) {
 //        this.databaseConnection = databaseConnection;
 //    }
 //    // Execute SELECT query and return results
@@ -107,4 +98,4 @@
 //            statement.setObject(i + 1, params[i]);
 //        }
 //    }
-//}
+}

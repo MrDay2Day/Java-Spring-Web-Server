@@ -4,12 +4,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-public class User {
-    private int id;
-    private String email;
-    private String password;
-    private String firstName;
-    private String lastName;
+public class    User {
+        private int id;
+        private String email;
+        private String password;
+        private String firstName;
+        private String lastName;
     private LocalDate dob;
 
     // Constructors
